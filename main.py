@@ -6,7 +6,7 @@ from sqlalchemy import (Column, DateTime, ForeignKey, Integer, MetaData,
 from sqlalchemy.orm import (Session, declarative_base, relationship,
                             sessionmaker)
 
-engine = create_engine(f'sqlite:///database.sqlite3')
+engine = create_engine(url=f'sqlite:///database.sqlite3', echo=False)
 
 Base = declarative_base()
 
@@ -52,58 +52,41 @@ class OrderLine(Base):
 
 Base.metadata.create_all(engine)
 
-fname = {
-    "m": ["Николай","Руслан","Алексей","Юрий","Ярослав","Семен","Евгений","Олег","Артур","Петр","Степан","Вячеслав","Сергей","Василий","Степа","Федор","Стас","Вячеслав","Георгий","Антон","Борис","Захар","Арсений","Виктор","Родион","Святослав","Игорь","Гордей"],
-    "w": ["Кристина", "Любовь", "Евдокия", "Калерия", "Рада", "Александра", "Белла", "Ярослава", "Антонина", "Ирина", "Мирослава", "Елизавета", "Софья", "Агата", "Марина", "Устинья", "Элеонора", "Диана", "Алевтина", "Августа", "Эвелина", "Ника", "Зинаида", "София", "Маргарита"]
-}
+c1 = Customer(first_name = 'Dmitriy', last_name = 'Yatsenko', username = 'Moseend', email = 'moseend@mail.com')
+c2 = Customer(first_name = 'Valeriy', last_name = 'Golyshkin', username = 'Fortioneaks', email = 'fortioneaks@gmail.com')
+c3 = Customer(first_name = "Vadim", last_name = "Moiseenko", username = "Antence73", email = "antence73@mail.com",)
+c4 = Customer(first_name = "Vladimir", last_name = "Belousov", username = "Andescols", email = "andescols@mail.com")
+c5 = Customer(first_name = "Tatyana", last_name = "Khakimova", username = "Caltin1962", email = "caltin1962@mail.com")
+c6 = Customer(first_name = "Pavel", last_name = "Arnautov", username = "Lablen", email = "lablen@mail.com")
+# session.add_all([c1, c2, c3, c4, c5, c6])
+# print("\n".join([f'{user.id} {user.first_name} {user.last_name}' for user in session.new]))
 
-lname = [
-    "Смирнов","Иванов","Кузнецов","Соколов","Попов","Лебедев","Козлов","Новиков","Морозов","Петров","Волков","Соловьёв","Васильев","Зайцев","Павлов",
-    "Семёнов","Голубев","Виноградов","Богданов","Воробьёв","Фёдоров","Михайлов","Беляев","Тарасов","Белов","Комаров","Орлов","Киселёв","Макаров",
-    "Андреев","Ковалёв","Ильин","Гусев","Титов","Кузьмин","Кудрявцев","Баранов","Куликов","Алексеев","Степанов","Яковлев","Сорокин","Сергеев","Романов",
-    "Захаров","Борисов","Королёв","Герасимов","Пономарёв","Григорьев","Лазарев","Медведев","Ершов","Никитин","Соболев","Рябов","Поляков","Цветков",
-    "Данилов","Жуков","Фролов","Журавлёв","Николаев","Крылов","Максимов","Сидоров","Осипов","Белоусов","Федотов","Дорофеев","Егоров","Матвеев",
-    "Бобров","Дмитриев","Калинин","Анисимов","Петухов","Антонов","Тимофеев","Никифоров","Веселов","Филиппов","Марков","Большаков","Суханов","Миронов",
-    "Ширяев","Александров","Коновалов","Шестаков","Казаков","Ефимов","Денисов","Громов","Фомин","Давыдов","Мельников","Щербаков","Блинов","Колесников",
-    "Карпов","Афанасьев","Власов","Маслов","Исаков","Тихонов","Аксёнов","Гаврилов","Родионов","Котов","Горбунов","Кудряшов","Быков","Зуев","Третьяков",
-    "Савельев","Панов","Рыбаков","Суворов","Абрамов","Воронов","Мухин","Архипов","Трофимов","Мартынов","Емельянов","Горшков","Чернов","Овчинников",
-    "Селезнёв","Панфилов","Копылов","Михеев","Галкин","Назаров","Лобанов","Лукин","Беляков","Потапов","Некрасов","Хохлов","Жданов","Наумов","Шилов",
-    "Воронцов","Ермаков","Дроздов","Игнатьев","Савин","Логинов","Сафонов","Капустин","Кириллов","Моисеев","Елисеев","Кошелев","Костин","Горбачёв","Орехов",
-    "Ефремов","Исаев","Евдокимов","Калашников","Кабанов","Носков","Юдин","Кулагин","Лапин","Прохоров","Нестеров","Харитонов","Агафонов","Муравьёв","Ларионов",
-    "Федосеев","Зимин","Пахомов","Шубин","Игнатов","Филатов","Крюков","Рогов","Кулаков","Терентьев","Молчанов","Владимиров","Артемьев","Гурьев","Зиновьев","Гришин",
-    "Кононов","Дементьев","Ситников","Симонов","Мишин","Фадеев","Комиссаров","Мамонтов","Носов","Гуляев","Шаров","Устинов","Вишняков","Евсеев","Лаврентьев","Брагин",
-    "Константинов","Корнилов","Авдеев","Зыков","Бирюков","Шарапов","Никонов","Щукин","Дьячков","Одинцов","Сазонов","Якушев","Красильников","Гордеев","Самойлов",
-    "Князев","Беспалов","Уваров","Шашков","Бобылёв","Доронин","Белозёров","Рожков","Самсонов","Мясников","Лихачёв","Буров","Сысоев","Фомичёв","Русаков","Стрелков",
-    "Гущин","Тетерин","Колобов","Субботин","Фокин","Блохин","Селиверстов","Пестов","Кондратьев","Силин","Меркушев","Лыткин","Туров"
-]
+i1 = Item(name = 'Chair', cost_price = 9.21, selling_price = 10.81, quantity = 5)
+i2 = Item(name = 'Pen', cost_price = 3.45, selling_price = 4.51, quantity = 3)
+i3 = Item(name = 'Headphone', cost_price = 15.52, selling_price = 16.81, quantity = 50)
+i4 = Item(name = 'Travel Bag', cost_price = 20.1, selling_price = 24.21, quantity = 50)
+i5 = Item(name = 'Keyboard', cost_price = 20.1, selling_price = 22.11, quantity = 50)
+i6 = Item(name = 'Monitor', cost_price = 200.14, selling_price = 212.89, quantity = 50)
+i7 = Item(name = 'Watch', cost_price = 100.58, selling_price = 104.41, quantity = 50)
+i8 = Item(name = 'Water Bottle', cost_price = 20.89, selling_price = 25, quantity = 50)
+# session.add_all([i1, i2, i3, i4, i5, i6, i7, i8])
 
-grocery_list = [
-    "Яблоки", "Бананы", "Апельсины", "Груши", "Виноград",
-    "Мандарины", "Лимоны", "Киви", "Персики", "Сливы",
-    "Картофель", "Морковь", "Лук", "Чеснок", "Капуста",
-    "Огурцы", "Помидоры", "Перец", "Кабачки", "Баклажаны",
-    "Хлеб", "Молоко", "Кефир", "Сметана", "Йогурт",
-    "Сыр", "Творог", "Яйца", "Масло сливочное", "Масло растительное",
-    "Мука", "Сахар", "Соль", "Рис", "Гречка",
-    "Макароны", "Курица", "Говядина", "Свинина", "Рыба",
-    "Колбаса", "Сосиски", "Чай", "Кофе", "Какао",
-    "Шоколад", "Мёд", "Варенье", "Печенье", "Конфеты"
-]
+o1 = Order(customer = c1)
+o2 = Order(customer = c1)
 
+line_item1 = OrderLine(order = o1, item = i1, quantity =  3)
+line_item2 = OrderLine(order = o1, item = i2, quantity =  2)
+line_item3 = OrderLine(order = o2, item = i1, quantity =  1)
+line_item3 = OrderLine(order = o2, item = i2, quantity =  4)
+# session.add_all([o1, o2])
 
-# users = [Customer(first_name=choice(fname["m"]), last_name=choice(lname), username=f"@user_{i}", email=f"user_{i}@gmail.com") for i in range(1, 5)]
-# session.add_all(users)
+o3 = Order(customer = c1)
+orderline1 = OrderLine(item = i1, quantity = 5)
+orderline2 = OrderLine(item = i2, quantity = 10)
 
-# items = [Item(name=grocery, cost_price=randint(5, 10), selling_price=randint(15, 20), quantity=randint(50, 100)) for grocery in grocery_list]
-# session.add_all(items)
+o3.line_items.append(orderline1)
+o3.line_items.append(orderline2)
 
-# customers = session.query(Customer).all()
-# orders = [Order(customer_id=customer.id) for customer in customers]
-# session.add_all(orders)
-
-orders = session.query(Order).all()
-items = session.query(Item).all()
-order_line = [OrderLine(order_id=order.id, item_id=choice(items).id, quantity=randint(1, 5)) for order in orders]
-session.add_all(order_line)
+session.add_all([o3,])
 
 session.commit()
